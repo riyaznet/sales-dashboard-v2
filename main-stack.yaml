@@ -63,7 +63,7 @@ Resources:
 Outputs:
   SalesDashboardURL:
     Description: Sales Dashboard URL
-    Value: !ImportValue lab-frontend-alb-url
+    Value: !GetAtt ALBStack.Outputs.FrontendALBDNS
 
   ApiEndpoint:
     Description: API Endpoint
