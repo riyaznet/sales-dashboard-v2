@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: CI/CD pipeline for Cloud-Native Sales Dashboard with Node.js Lambda
+Description: CI/CD pipeline for Cloud-Native Sales Dashboard with ECS and Lambda
 
 Parameters:
   GitHubRepo:
     Type: String
-    Description: GitHub repository in the format owner/repo (e.g., yourname/sales-dashboard)
+    Description: GitHub repository in the format owner/repo
 
   GitHubBranch:
     Type: String
     Default: main
-    Description: GitHub branch to track (e.g., main)
+    Description: GitHub branch to track
 
   TemplateBucket:
     Type: String
@@ -17,7 +17,7 @@ Parameters:
 
   LatestAmiId:
     Type: String
-    Description: Latest Amazon Linux 2023 AMI ID
+    Description: Amazon Linux 2023 AMI ID
 
 Resources:
   GitHubConnection:
@@ -70,31 +70,9 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
         - arn:aws:iam::aws:policy/AmazonRDSFullAccess
         - arn:aws:iam::aws:policy/SecretsManagerReadWrite
-        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
         - arn:aws:iam::aws:policy/AmazonSSMFullAccess
-
-      Policies:
-        - PolicyName: AdditionalIAMAccess
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - iam:CreateRole
-                  - iam:TagRole
-                  - iam:PutRolePolicy
-                  - iam:AttachRolePolicy
-                  - iam:PassRole
-                  - iam:GetInstanceProfile
-                  - iam:CreateInstanceProfile
-                  - iam:AddRoleToInstanceProfile
-                  - iam:UpdateRole
-                  - iam:RemoveRoleFromInstanceProfile
-                  - iam:DeleteInstanceProfile
-                  - iam:RemoveRoleFromInstance
-                  - iam:DeleteRolePolicy
-                  - iam:DeleteRole
-                Resource: "*"
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
@@ -112,10 +90,14 @@ Resources:
             Value: !Ref TemplateBucket
           - Name: LATEST_AMI_ID
             Value: !Ref LatestAmiId
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Artifacts:
         Type: CODEPIPELINE
-      TimeoutInMinutes: 15
+      TimeoutInMinutes: 20
 
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -141,11 +123,10 @@ Resources:
                 FullRepositoryId: !Ref GitHubRepo
                 BranchName: !Ref GitHubBranch
                 DetectChanges: true
-              RunOrder: 1
 
         - Name: BuildAndDeploy
           Actions:
-            - Name: SAMBuildAndDeploy
+            - Name: DockerBuildAndDeploy
               ActionTypeId:
                 Category: Build
                 Owner: AWS
@@ -157,7 +138,6 @@ Resources:
                 - Name: BuildOutput
               Configuration:
                 ProjectName: !Ref CodeBuildProject
-              RunOrder: 1
 
 Outputs:
   PipelineName:
