@@ -1,10 +1,5 @@
 version: "0.2"
 
-env:
-  variables:
-    AWS_ACCOUNT_ID: "REPLACE_WITH_YOUR_ACCOUNT_ID"
-    AWS_REGION: "us-east-1"
-
 phases:
   install:
     runtime-versions:
@@ -44,8 +39,8 @@ phases:
       - aws s3 cp iam.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp rds.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp alb.yaml s3://$TEMPLATE_BUCKET/
-      - aws s3 cp ecs.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp ecr.yaml s3://$TEMPLATE_BUCKET/
+      - aws s3 cp ecs.yaml s3://$TEMPLATE_BUCKET/
 
   post_build:
     commands:

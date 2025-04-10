@@ -83,9 +83,9 @@ Resources:
         BuildSpec: buildspec.yml
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: public.ecr.aws/sam/build-nodejs22.x
+        Image: aws/codebuild/standard:7.0 # Docker-capable standard image
         Type: LINUX_CONTAINER
-        PrivilegedMode: true # Required to run Docker inside CodeBuild
+        PrivilegedMode: true # Required to build Docker images inside CodeBuild
         EnvironmentVariables:
           - Name: TEMPLATE_BUCKET
             Value: !Ref TemplateBucket
