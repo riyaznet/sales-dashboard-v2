@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Main parent stack for Cloud-Native Sales Dashboard
+Description: Main parent stack for Cloud-Native Sales Dashboard (ECS Fargate Version)
 
 Parameters:
   TemplateBucket:
@@ -36,22 +36,35 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/serverless-packaged.yaml"
 
-  EC2Stack:
+  ECRStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecr.yaml"
+
+  ALBStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: VPCStack
+    Properties:
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/alb.yaml"
+
+  ECSStack:
     Type: AWS::CloudFormation::Stack
     DependsOn:
-      - VPCStack
       - IAMStack
+      - VPCStack
+      - ALBStack
       - ServerlessStack
+      - ECRStack
     Properties:
-      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/web-app.yaml"
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecs.yaml"
       Parameters:
-        LatestAmiId: !Ref LatestAmiId
         ApiEndpoint: !GetAtt ServerlessStack.Outputs.ApiEndpoint
 
 Outputs:
   SalesDashboardURL:
     Description: Sales Dashboard URL
-    Value: !GetAtt EC2Stack.Outputs.SalesDashboardURL
+    Value: !ImportValue lab-frontend-alb-url
+
   ApiEndpoint:
     Description: API Endpoint
     Value: !GetAtt ServerlessStack.Outputs.ApiEndpoint
