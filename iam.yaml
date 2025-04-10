@@ -1,38 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: IAM roles for EC2 and Lambda (used in Cloud-Native Sales Dashboard)
+Description: IAM roles for Lambda and ECS Fargate (used in Cloud-Native Sales Dashboard)
 
 Resources:
-  EC2InstanceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: lab-ec2-instance-profile
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: ec2.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-      Policies:
-        - PolicyName: allow-read-config
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - cloudformation:ListExports
-                  - secretsmanager:GetSecretValue
-                Resource: "*"
-
-  EC2InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties:
-      InstanceProfileName: lab-ec2-instance-profile
-      Roles:
-        - !Ref EC2InstanceRole
-
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -56,15 +25,49 @@ Resources:
                   - secretsmanager:GetSecretValue
                 Resource: "*"
 
-Outputs:
-  EC2ProfileName:
-    Description: Instance profile for EC2
-    Value: !Ref EC2InstanceProfile
-    Export:
-      Name: lab-ec2-instance-profile
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lab-ecs-task-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
 
+  ECSAutoScalingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lab-ecs-autoscaling-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: application-autoscaling.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceAutoscaleRole
+
+Outputs:
   LambdaRoleArn:
     Description: Lambda execution role ARN
     Value: !GetAtt LambdaExecutionRole.Arn
     Export:
       Name: lab-lambda-exec-role
+
+  ECSTaskExecutionRoleArn:
+    Description: ECS task execution role ARN
+    Value: !GetAtt ECSTaskExecutionRole.Arn
+    Export:
+      Name: lab-ecs-task-execution-role
+
+  ECSAutoScalingRoleArn:
+    Description: ECS autoscaling role ARN
+    Value: !GetAtt ECSAutoScalingRole.Arn
+    Export:
+      Name: lab-ecs-autoscaling-role
