@@ -15,7 +15,7 @@ Resources:
   FrontendLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Ref FrontendLogGroup
+      LogGroupName: /ecs/sales-dashboard-frontend
       RetentionInDays: 1
 
   FrontendTaskDefinition:
@@ -42,7 +42,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: /ecs/sales-dashboard-frontend
+              awslogs-group: !Ref FrontendLogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: frontend
 
