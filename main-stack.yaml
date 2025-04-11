@@ -54,17 +54,17 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/alb.yaml"
 
-  # ECSStack:
-  #   Type: AWS::CloudFormation::Stack
-  #   DependsOn:
-  #     - IAMStack
-  #     - VPCStack
-  #     - ALBStack
-  #     - ServerlessStack
-  #   Properties:
-  #     TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecs.yaml"
-  #     Parameters:
-  #       ApiEndpoint: !GetAtt ServerlessStack.Outputs.ApiEndpoint
+  ECSStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - IAMStack
+      - VPCStack
+      - ALBStack
+      - ServerlessStack
+    Properties:
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecs.yaml"
+      Parameters:
+        ApiEndpoint: !GetAtt ServerlessStack.Outputs.ApiEndpoint
 
 Outputs:
   SalesDashboardURL:
