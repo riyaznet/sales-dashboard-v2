@@ -1,5 +1,9 @@
 version: "0.2"
 
+env:
+  variables:
+    AWS_REGION: "us-east-1"
+
 phases:
   install:
     runtime-versions:
@@ -10,6 +14,19 @@ phases:
 
   build:
     commands:
+      - echo Deploying ECR stack
+      - |
+        aws cloudformation deploy \
+          --stack-name lab-ecr-stack \
+          --template-file ecr.yaml \
+          --capabilities CAPABILITY_NAMED_IAM
+
+      - echo Extracting ECR URI from exports
+      - |
+        ECR_URI=$(aws cloudformation list-exports \
+          --query "Exports[?Name=='lab-ecr-frontend-uri'].Value" \
+          --output text)
+
       - echo Building Docker image
       - docker build -t sales-dashboard-frontend .
 
@@ -17,12 +34,12 @@ phases:
       - |
         aws ecr get-login-password | docker login \
           --username AWS \
-          --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+          --password-stdin ${ECR_URI%/*}
 
       - echo Tagging and pushing image to ECR
       - |
-        docker tag sales-dashboard-frontend:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/sales-dashboard-frontend:latest
-        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/sales-dashboard-frontend:latest
+        docker tag sales-dashboard-frontend:latest $ECR_URI:latest
+        docker push $ECR_URI:latest
 
       - echo Packaging SAM template
       - mkdir -p dist

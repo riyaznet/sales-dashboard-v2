@@ -24,7 +24,10 @@ Resources:
       ExecutionRoleArn: !ImportValue lab-ecs-task-execution-role
       ContainerDefinitions:
         - Name: frontend
-          Image: !ImportValue lab-ecr-frontend-uri
+          Image: !Join
+            - ":"
+            - - !ImportValue lab-ecr-frontend-uri
+              - "latest"
           PortMappings:
             - ContainerPort: 80
           Environment:
@@ -88,3 +91,21 @@ Outputs:
   ClusterName:
     Description: ECS Cluster name
     Value: !Ref FrontendCluster
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: ECS Configuration
+        Parameters:
+          - ApiEndpoint
+    ParameterLabels:
+      ApiEndpoint:
+        default: API Gateway Endpoint
+
+Conditions: {}
+
+Mappings: {}
+
+ParametersTransform:
+  labECR: !ImportValue lab-ecr-frontend-uri

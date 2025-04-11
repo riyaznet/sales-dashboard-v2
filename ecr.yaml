@@ -15,6 +15,6 @@ Resources:
 Outputs:
   FrontendRepositoryUri:
     Description: URI of the ECR repository
-    Value: !Sub "${FrontendECRRepository}.dkr.ecr.${AWS::Region}.amazonaws.com"
+    Value: !GetAtt FrontendECRRepository.RepositoryUri
     Export:
       Name: lab-ecr-frontend-uri

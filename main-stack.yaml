@@ -36,11 +36,6 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/serverless-packaged.yaml"
 
-  ECRStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecr.yaml"
-
   ALBStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: VPCStack
@@ -54,7 +49,6 @@ Resources:
       - VPCStack
       - ALBStack
       - ServerlessStack
-      - ECRStack
     Properties:
       TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ecs.yaml"
       Parameters:
