@@ -36,6 +36,18 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/serverless-packaged.yaml"
 
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - VPCStack
+      - IAMStack
+      - ServerlessStack
+    Properties:
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/web-app.yaml"
+      Parameters:
+        LatestAmiId: !Ref LatestAmiId
+        ApiEndpoint: !GetAtt ServerlessStack.Outputs.ApiEndpoint
+
   ALBStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: VPCStack

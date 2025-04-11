@@ -29,7 +29,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref LabVPC
-      CidrBlock: 10.0.1.0/24
+      CidrBlock: 10.0.0.0/24
       MapPublicIpOnLaunch: true
       AvailabilityZone:
         Fn::Select:
@@ -39,11 +39,25 @@ Resources:
         - Key: Name
           Value: lab-public-subnet-1
 
+  LabPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      Tags:
+        - Key: Name
+          Value: lab-public-subnet-2
+
   LabPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref LabVPC
-      CidrBlock: 10.0.2.0/24
+      CidrBlock: 10.0.255.0/24
       MapPublicIpOnLaunch: false
       AvailabilityZone:
         Fn::Select:
@@ -57,7 +71,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref LabVPC
-      CidrBlock: 10.0.3.0/24
+      CidrBlock: 10.0.254.0/24
       MapPublicIpOnLaunch: false
       AvailabilityZone:
         Fn::Select:
@@ -66,20 +80,6 @@ Resources:
       Tags:
         - Key: Name
           Value: lab-private-subnet-2
-
-  LabPublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref LabVPC
-      CidrBlock: 10.0.4.0/24
-      MapPublicIpOnLaunch: true
-      AvailabilityZone:
-        Fn::Select:
-          - 1
-          - Fn::GetAZs: ""
-      Tags:
-        - Key: Name
-          Value: lab-public-subnet-2
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
