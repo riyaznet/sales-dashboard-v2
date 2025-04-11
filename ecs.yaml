@@ -12,6 +12,12 @@ Resources:
     Properties:
       ClusterName: sales-dashboard-cluster
 
+  FrontendLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /ecs/sales-dashboard-frontend
+      RetentionInDays: 1
+
   FrontendTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
