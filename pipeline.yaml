@@ -68,13 +68,13 @@ Resources:
         - arn:aws:iam::aws:policy/AWSLambda_FullAccess
         - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
         - arn:aws:iam::aws:policy/AmazonRDSFullAccess
+        - arn:aws:iam::aws:policy/SecretsManagerReadWrite
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
-        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
         - arn:aws:iam::aws:policy/AmazonECS_FullAccess
         - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess
       Policies:
-        - PolicyName: AdditionalIAMAccess
+        - PolicyName: AdditionalAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -95,6 +95,9 @@ Resources:
                   - iam:DetachRolePolicy
                   - iam:DeleteRolePolicy
                   - iam:DeleteRole
+                  - ssm:SendCommand
+                  - ssm:GetParameters
+                  - ssm:GetParameter
                 Resource: "*"
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
