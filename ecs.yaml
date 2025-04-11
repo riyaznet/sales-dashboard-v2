@@ -15,7 +15,7 @@ Resources:
   FrontendLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /ecs/sales-dashboard-frontend
+      LogGroupName: !Ref FrontendLogGroup
       RetentionInDays: 1
 
   FrontendTaskDefinition:
@@ -50,6 +50,7 @@ Resources:
     Type: AWS::ECS::Service
     DependsOn: FrontendTaskDefinition
     Properties:
+      ServiceName: sales-dashboard-frontend-svc
       Cluster: !Ref FrontendCluster
       LaunchType: FARGATE
       DesiredCount: 2
@@ -72,7 +73,7 @@ Resources:
     Properties:
       MaxCapacity: 4
       MinCapacity: 2
-      ResourceId: !Sub "service/${FrontendCluster}/${FrontendService}"
+      ResourceId: service/sales-dashboard-cluster/sales-dashboard-frontend-svc
       RoleARN: !ImportValue lab-ecs-autoscaling-role
       ScalableDimension: ecs:service:DesiredCount
       ServiceNamespace: ecs
