@@ -8,7 +8,8 @@ Resources:
       Name: sales-dashboard-alb
       Scheme: internet-facing
       Subnets:
-        - !ImportValue lab-public-subnet
+        - !ImportValue lab-public-subnet-1
+        - !ImportValue lab-public-subnet-2
       SecurityGroups:
         - !ImportValue lab-sg-public
 

@@ -25,7 +25,7 @@ Resources:
       VpcId: !Ref LabVPC
       InternetGatewayId: !Ref LabInternetGateway
 
-  LabPublicSubnet:
+  LabPublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref LabVPC
@@ -37,7 +37,7 @@ Resources:
           - Fn::GetAZs: ""
       Tags:
         - Key: Name
-          Value: lab-public-subnet
+          Value: lab-public-subnet-1
 
   LabPrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -67,6 +67,20 @@ Resources:
         - Key: Name
           Value: lab-private-subnet-2
 
+  LabPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.0.4.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      Tags:
+        - Key: Name
+          Value: lab-public-subnet-2
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -83,10 +97,16 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref LabInternetGateway
 
-  PublicSubnetRouteTableAssociation:
+  PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref LabPublicSubnet
+      SubnetId: !Ref LabPublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref LabPublicSubnet2
       RouteTableId: !Ref PublicRouteTable
 
   PrivateRouteTable:
@@ -192,11 +212,17 @@ Outputs:
     Export:
       Name: lab-vpc
 
-  PublicSubnetId:
+  PublicSubnet1Id:
     Description: Public Subnet ID
-    Value: !Ref LabPublicSubnet
+    Value: !Ref LabPublicSubnet1
     Export:
-      Name: lab-public-subnet
+      Name: lab-public-subnet-1
+
+  PublicSubnet2Id:
+    Description: Public Subnet ID
+    Value: !Ref LabPublicSubnet2
+    Export:
+      Name: lab-public-subnet-2
 
   PrivateSubnet1Id:
     Description: Private Subnet 1 ID
