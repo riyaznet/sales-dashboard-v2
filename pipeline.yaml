@@ -92,6 +92,7 @@ Resources:
                   - iam:RemoveRoleFromInstanceProfile
                   - iam:DeleteInstanceProfile
                   - iam:RemoveRoleFromInstance
+                  - iam:DetachRolePolicy
                   - iam:DeleteRolePolicy
                   - iam:DeleteRole
                 Resource: "*"
