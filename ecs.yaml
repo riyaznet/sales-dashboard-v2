@@ -68,16 +68,6 @@ Resources:
           ContainerPort: 80
           TargetGroupArn: !ImportValue lab-frontend-target-group
 
-  FrontendScalingTarget:
-    Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties:
-      MaxCapacity: 4
-      MinCapacity: 2
-      ResourceId: service/sales-dashboard-cluster/sales-dashboard-frontend-svc
-      RoleARN: !ImportValue lab-ecs-autoscaling-role
-      ScalableDimension: ecs:service:DesiredCount
-      ServiceNamespace: ecs
-
 Outputs:
   ECSServiceName:
     Description: ECS Service name
