@@ -55,7 +55,7 @@ phases:
       - aws s3 cp vpc.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp iam.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp rds.yaml s3://$TEMPLATE_BUCKET/
-      - aws s3 cp web-app.yaml s3://$TEMPLATE_BUCKET/
+      - aws s3 cp ec2.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp alb.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp ecr.yaml s3://$TEMPLATE_BUCKET/
       - aws s3 cp ecs.yaml s3://$TEMPLATE_BUCKET/

@@ -43,7 +43,7 @@ Resources:
       - IAMStack
       - ServerlessStack
     Properties:
-      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/web-app.yaml"
+      TemplateURL: !Sub "https://s3.${AWS::Region}.amazonaws.com/${TemplateBucket}/ec2.yaml"
       Parameters:
         LatestAmiId: !Ref LatestAmiId
         ApiEndpoint: !GetAtt ServerlessStack.Outputs.ApiEndpoint
